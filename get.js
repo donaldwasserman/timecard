@@ -13,7 +13,11 @@ var testTags = function(list, tag) {
 	return _.contains(tagTruth, tag);
 }
 
-module.exports = function (api, wkspce, lookback, tagID) {
+var projectNames = function(api, wkspce) {
+	request('https://'+api+'')
+}
+
+getCompletedTasks = function (api, wkspce, lookback, tagID) {
 	var now = moment();
 	var computedDate = now.subtract('months', lookback).format('YYYY-MM-DDTHH:MM:SSZZ');
 
@@ -34,3 +38,5 @@ module.exports = function (api, wkspce, lookback, tagID) {
 		return tasklist;
 	})
 }
+getCompletedTasks(creds.api, creds.mhc, 1, creds.tc);
+

@@ -7,16 +7,20 @@ var http = require('http'),
 
 
 var app = express();
-var handlebars = require('express3-handlebars').create({defaultLayout: 'main'});
-app.engine('handlebars', handlebars.engine);
-app.set('view engine', 'handlebars');
+var handlebars = require('express3-handlebars').create({extname: '.hbs', defaultLayout: 'main'});
+app.engine('hbs', handlebars.engine);
+app.set('view engine', 'hbs');
 
 app.set('port', process.env.PORT || 3000);
 
-app.use(function  (req, res) {
-	res.type('text/plain');
-	res.status(404);
-	res.send('Welcome to donad\'s timecard ');
+app.get('/', function  (req, res) {
+	res.render('home');
+});
+
+app.get('/get-card', function (req, res){
+	res.render('getTasks', {
+		timecard: tasks.getTasks(credentials.api, credentials.mhc, 1, credentials.tc)
+	});
 });
 
 app.listen(app.get('port'), function (){
