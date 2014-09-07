@@ -1,28 +1,65 @@
-var http = require('http'),
-	express = require('express'),
-	tasks = require('./lib/tasks.js'),
+var request = require('request'),
 	moment = require('moment'),
-	credentials = require('./lib/credentials.js')
-	_ = require('underscore');
+	_ = require('underscore'),
+	nodemailer = require('nodemailer'),
+	csv = require('to-csv'),
+	fs = require('fs');
+	creds = require('./config.js');
 
+var testTags = function(list, tag) {
+	tagTruth = [];
+	for (var i = 0; i < list.length; i++) {
+		if (list[i].id == tag) {
+			tagTruth.push(list[i].id.toString())
+		} 
+	}
+	return _.contains(tagTruth, tag);
+}
 
-var app = express();
-var handlebars = require('express3-handlebars').create({extname: '.hbs', defaultLayout: 'main'});
-app.engine('hbs', handlebars.engine);
-app.set('view engine', 'hbs');
+var getCompletedTasks = function (api, wkspce, lookback, tagID) {
 
-app.set('port', process.env.PORT || 3000);
+	var now = moment();
+	var computedDate = now.subtract('months', lookback).format('YYYY-MM-DDTHH:MM:SSZZ');
 
-app.get('/', function  (req, res) {
-	res.render('home');
-});
+	request('https://'+api+':@app.asana.com/api/1.0/tasks?workspace='+wkspce+'&completed_since='+computedDate+'&assignee=me&opt_fields=due_on,name,projects,tags,completed_at', function(err, response, data){
 
-app.get('/get-card', function (req, res){
-	res.render('getTasks', {
-		timecard: tasks.getTasks(credentials.api, credentials.mhc, 1, credentials.tc)
+		if (err) console.error(err);
+		var dataObj = JSON.parse(data);
+		var list = _.filter(dataObj.data, function (el) {
+			return el.completed_at !== null && testTags(el.tags, tagID);
+		})
+
+		request('https://'+api+':@app.asana.com/api/1.0/workspaces/'+wkspce+'/projects', function(err, res, mdata) {
+			
+			var moreData = JSON.parse(mdata);
+			var projectList = moreData.data; 
+
+			var tasklist = _.each(list, function(i) {
+				
+				i.time = (i.name.indexOf('##') > 0) ? i.name.substring(i.name.indexOf('##') + 2) : 'no time';
+				
+				i.projectID = (i.projects.length === 1) ? i.projects[0].id : 'invalid projects' 
+				
+				i.displayname = i.name.slice(0, i.name.indexOf('##'));
+				
+				i.date = moment(i.completed_at).format("MM/DD/YYYY");
+				
+				i.projectName = _.values(_.pick(_.findWhere(projectList, {id: i.projectID}), 'name'))[0];
+			});
+
+			var filtered = _.map(tasklist, function(t) {
+				return _.pick(t, 'displayname', 'date', 'time', 'projectName');
+			});
+			
+			fs.writeFile('output/'+moment(now).format('MMM-YYYY')+'-timecard.csv', csv(filtered), function (err) {
+				console.log('Your timecard for '+moment(now).format('MMMM')+' is done! Check your "OUTPUT" folder, and grab a beer.');
+			}) 
+
+		});
+
 	});
-});
+	
+}
 
-app.listen(app.get('port'), function (){
-	console.log("express started on localhost://"+ app.get('port')+ " !");
-});
+getCompletedTasks(creds.api, creds.workspace, creds.lookback, creds.tag);
+

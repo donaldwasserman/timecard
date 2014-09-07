@@ -1,14 +1,13 @@
 {
   "name": "asanaTimecard",
-  "version": "0.0.0",
+  "author": "Donald Wasserman",
+  "version": "0.1.0",
   "description": "Test application for creating a timecard from asana tasks.",
   "main": "timecard.js",
   "dependencies": {
-    "express": "~4.4.2",
-    "express3-handlebars": "~0.5.0",
     "moment": "~2.7.0",
     "request": "~2.36.0",
     "underscore": "~1.6.0",
-    "nodemailer": "~0.7.0"
+    "to-csv": "0.0.2"
   }
 }

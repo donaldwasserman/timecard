@@ -1,3 +1,3 @@
 node_modules
 lib/credentials.js
-query.js
+output/*
