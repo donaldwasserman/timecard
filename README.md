@@ -17,7 +17,7 @@ Step 4. Find your asana api key, workspace id, and tag id used to track your tim
 
 Step 5. Rename config.SAMPLE.js to config.js
 
-Step 6. node timecard.js
+Step 6. enter "node timecard" into the ole command line
 
 Step 7. Tasty beverage
 
