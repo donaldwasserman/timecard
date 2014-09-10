@@ -19,7 +19,7 @@ var getCompletedTasks = function (api, wkspce, lookback, tagID) {
 
 	var now = moment();
 	var computedDate = now.subtract('months', lookback).format('YYYY-MM-DDTHH:MM:SSZZ');
-
+	console.log('Calling up Asana...');
 	request('https://'+api+':@app.asana.com/api/1.0/tasks?workspace='+wkspce+'&completed_since='+computedDate+'&assignee=me&opt_fields=due_on,name,projects,tags,completed_at', function(err, response, data){
 
 		if (!err) {
@@ -47,7 +47,7 @@ var getCompletedTasks = function (api, wkspce, lookback, tagID) {
 						
 						i.projectName = _.values(_.pick(_.findWhere(projectList, {id: i.projectID}), 'name'))[0];
 					});
-
+					console.log('...wow, you made a lot of demands...');
 					var filtered = _.map(tasklist, function(t) {
 						return _.pick(t, 'displayname', 'date', 'time', 'projectName');
 					});

@@ -3,13 +3,13 @@
 module.exports = {
 	
 	//asana api key
-	api :'XXXXXXXXXXXXXXXXXXXXXXXXXXX',
+	api :'XXXXXXXXXXXXXXXXXXXXXXXXXXXX',
 	
 	//workspace id 
-	workspace :'111111111111111',
+	workspace :'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
 	
 	//tag used to track timecard entries
-	tag: '111111111111111111111',
+	tag: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
 
 	//lookback period in months
 	lookback: 1
