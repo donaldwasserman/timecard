@@ -10,7 +10,6 @@ module.exports = {
 	workspace : 1234567890123,
 	
 	//tag used to track timecard entries, set to '0' to get all tasks
-	//list as number, not as string
 	tag: 0987654321987654321,
 
 	//get tasks since this date 
