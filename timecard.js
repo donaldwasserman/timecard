@@ -26,9 +26,11 @@ var getCompletedTasks = function (api, wkspce, tagID, fromDate, toDate) {
 	var td; 
 	var now = moment();
 
-	//console.log('Calling up Asana...');
+	
 	request('https://'+api+':@app.asana.com/api/1.0/tasks?workspace='+wkspce+'&completed_since='+fd+'&assignee=me&opt_fields=due_on,name,projects,tags,completed_at', function(err, response, data){
-		console.log(data);
+	
+		console.log('Calling up Asana...');
+		
 		if (!err) {
 
 			try {
@@ -39,19 +41,22 @@ var getCompletedTasks = function (api, wkspce, tagID, fromDate, toDate) {
 					return el.completed_at !== null && testTags(el.tags, tagID);
 				});
 				
-				if (typeof toDate !== 'undefined') {
-					list = _.filter(list, function (l) {
-						return	moment(l.completed_at).isBefore(toDate, 'day');
-					});
-				}
+				console.log("Got the data, searching for your tasks...")				
+			
+				list = _.filter(list, function (l) {
+					return	moment(l.completed_at).isBefore(toDate, 'day');
+				});
+			
 
 				if (list < 1) {
-					console.log("dude, you really only did less than 1 thing?");
+					console.log("Why bother if you're only going to complete one project.");
 				
 				} else {
 
 				request('https://'+api+':@app.asana.com/api/1.0/workspaces/'+wkspce+'/projects', function(err, res, mdata) {
 					
+					console.log("Organizing your spreadsheet...aren't you glad you aren't doing this?");
+
 					var moreData = JSON.parse(mdata);
 					var projectList = moreData.data; 
 
@@ -82,7 +87,7 @@ var getCompletedTasks = function (api, wkspce, tagID, fromDate, toDate) {
 				});
 			 }
 			} catch(e) {
-				console.log(data)
+				console.log("there's been an error: " + e +"1" );
 			}
 			
 
